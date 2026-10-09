@@ -91,16 +91,10 @@ def test_terse_field_form_hour_step():
 
 # --- macros ------------------------------------------------------------------
 
-@pytest.mark.parametrize("macro, expected", [
-    ("@hourly", "min-0 hour-*"),
-    ("@daily", "00:00 daily"),
-    ("@midnight", "00:00 daily"),
-    ("@weekly", "00:00 Sun"),
-    ("@monthly", "00:00 dom-1"),
-    ("@yearly", "00:00 dom-1 Jan"),
-])
-def test_terse_macros(macro, expected):
-    assert terse(macro) == expected
+def test_terse_macro_raises():
+    # macros reverted upstream (v0.1); terse must reject them like describe
+    with pytest.raises(DescribeError):
+        terse("@daily")
 
 
 # --- errors and determinism ---------------------------------------------------

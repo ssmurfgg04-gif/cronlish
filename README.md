@@ -75,14 +75,13 @@ Exit codes: `0` success, `2` malformed expression (message on stderr). Quoting i
 ## Supported syntax (v0.2)
 
 - Standard five fields: minute, hour, day-of-month, month, day-of-week.
-- Values, ranges (`a-b`), lists (`a,b,c`), and steps (`*/n`, `a-b/n`) in all five fields.
-- Macros: `@hourly`, `@daily`/`@midnight`, `@weekly`, `@monthly`, `@yearly`/`@annually` (case-insensitive).
+- Values, ranges (`a-b`), lists (`a,b,c`), and steps (`*/n`, `a-b/n`) — steps in the minute and hour fields so far.
 - Day-of-week: `0`–`7` (both `0` and `7` are Sunday) and names `MON`–`SUN`, including ranges like `MON-FRI`.
 - Output is deterministic; lists are rendered in sorted order.
 
 Known quirks, described honestly: when both day-of-month and day-of-week are restricted, classic cron fires when *either* matches (OR) — cronlish says so ("... on day 1 of the month or on Monday").
 
-Not yet supported (each is an open, agent-friendly issue): month names like `JAN` (#3), the `--locale-style` CLI flag (#4).
+Not yet supported (each is an open, agent-friendly issue): steps in day-of-month/month/day-of-week (#1), `@hourly`-style macros (#2), month names like `JAN` (#3).
 
 ## 💰 Bounties
 

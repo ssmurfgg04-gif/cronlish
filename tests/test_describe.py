@@ -229,59 +229,14 @@ def test_error_month_names_not_supported_yet():
         describe("0 0 1 JAN *")
 
 
-def test_macro_hourly():
-    assert describe("@hourly") == "At minute 0 past every hour"
+def test_error_macros_not_supported_yet():
+    with pytest.raises(DescribeError, match="issue #2"):
+        describe("@daily")
 
 
-def test_macro_daily():
-    assert describe("@daily") == "At 00:00 every day"
-
-
-def test_macro_midnight():
-    assert describe("@midnight") == "At 00:00 every day"
-
-
-def test_macro_weekly():
-    assert describe("@weekly") == "At 00:00, Sunday"
-
-
-def test_macro_monthly():
-    assert describe("@monthly") == "At 00:00 on day 1 of the month"
-
-
-def test_macro_yearly():
-    assert describe("@yearly") == "At 00:00 on day 1 of the month in January"
-
-
-def test_macro_annually():
-    assert describe("@annually") == "At 00:00 on day 1 of the month in January"
-
-
-def test_macro_case_insensitive():
-    assert describe("@Daily") == describe("@daily")
-
-
-def test_error_unknown_macro():
-    with pytest.raises(DescribeError, match="unknown macro"):
-        describe("@sometimes")
-
-
-def test_dom_step_every_other_day():
-    assert describe("0 0 */2 * *") == (
-        "At 00:00 on days 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29 and 31 of the month")
-
-
-def test_dom_partial_step():
-    assert describe("0 12 1-10/2 * *") == "At 12:00 on days 1, 3, 5, 7 and 9 of the month"
-
-
-def test_dow_step():
-    assert describe("0 9 * * */2") == "At 09:00, Sunday, Tuesday, Thursday and Saturday"
-
-
-def test_month_step():
-    assert describe("0 0 1 */3 *") == (
-        "At 00:00 on day 1 of the month in January, April, July and October")
+def test_error_dom_step_not_supported_yet():
+    with pytest.raises(DescribeError, match="issue #1"):
+        describe("0 0 */2 * *")
 
 
 def test_error_dow_full_name():
