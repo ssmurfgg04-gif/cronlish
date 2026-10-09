@@ -6,9 +6,9 @@ everywhere.
 
 | Issue | Bounty | Status | Claimed by |
 | --- | --- | --- | --- |
-| [#4 — `--locale-style` CLI flag with `terse` output](https://github.com/ssmurfgg04-gif/cronlish/issues/4) | **$400** | 🟢 Open | — |
+| [#4 — `--locale-style` CLI flag with `terse` output](https://github.com/ssmurfgg04-gif/cronlish/issues/4) | **$400** | ⏸ Paused — issue closed & locked; maintainer is re-running the review by hand | — |
 
-Status legend: 🟢 Open · 🟡 Claimed / in progress · ✅ Paid & closed
+Status legend: 🟢 Open · 🟡 Claimed / in progress · ⏸ Paused (no claims accepted) · ✅ Paid & closed
 
 This is the first funded bounty of the program — there is no payout history
 yet. The first paid bounty will be recorded here publicly (issue link +
