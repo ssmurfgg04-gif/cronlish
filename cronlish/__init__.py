@@ -5,7 +5,8 @@
 'Every 5 minutes'
 """
 from cronlish.describe import DescribeError, describe
+from cronlish.locale import terse
 
 __version__ = "0.2.0"
 
-__all__ = ["describe", "DescribeError", "__version__"]
+__all__ = ["describe", "DescribeError", "terse", "__version__"]
