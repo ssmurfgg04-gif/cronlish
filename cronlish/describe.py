@@ -2,10 +2,9 @@
 
 :func:`describe` turns a standard crontab line (minute, hour, day-of-month,
 month, day-of-week) into one stable English sentence; identical input always
-yields byte-identical output. Supported: values, ranges (a-b), lists
-(a,b,c) and steps (*/n, a-b/n) in every field; the cron macros
-@hourly, @daily/@midnight, @weekly, @monthly and @yearly/@annually;
-weekday names MON-SUN (0 and 7 are both Sunday). Anything
+yields byte-identical output. Supported in v0.1: values, ranges (a-b), lists
+(a,b,c) and steps (*/n, a-b/n) in the minute and hour fields; values, ranges
+and lists elsewhere; weekday names MON-SUN (0 and 7 are both Sunday). Anything
 else raises :class:`DescribeError` saying what to do instead.
 
 >>> describe("*/5 * * * *")
@@ -25,15 +24,15 @@ _DAYS = ("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
          "Friday", "Saturday")
 _DOW_NAMES = {"SUN": 0, "MON": 1, "TUE": 2, "WED": 3, "THU": 4, "FRI": 5, "SAT": 6}
 
-# (name, smallest value, largest value, steps_ok, wraps_top_value)
+# (name, smallest value, largest value, steps_ok_in_v0_1, wraps_top_value)
 _FieldSpec = NamedTuple("_FieldSpec", [("name", str), ("lo", int), ("hi", int),
                                        ("steps", bool), ("wrap", bool)])
 _SPECS = (
     _FieldSpec("minute", 0, 59, True, False),
     _FieldSpec("hour", 0, 23, True, False),
-    _FieldSpec("day-of-month", 1, 31, True, False),
-    _FieldSpec("month", 1, 12, True, False),
-    _FieldSpec("day-of-week", 0, 7, True, True),
+    _FieldSpec("day-of-month", 1, 31, False, False),
+    _FieldSpec("month", 1, 12, False, False),
+    _FieldSpec("day-of-week", 0, 7, False, True),
 )
 # an arithmetic run of values: start, start+step, ..., end (all inclusive)
 _Run = NamedTuple("_Run", [("start", int), ("end", int), ("step", int)])
@@ -89,7 +88,7 @@ def _value_of(token, spec, expr):
             raise _err(expr, spec, f"value {value} out of range {spec.lo}-{spec.hi}{hint}")
         return value
     if spec.name == "month" and token.isalpha():
-        raise _err(expr, spec, "month names like 'JAN' are not supported yet; "
+        raise _err(expr, spec, "month names like 'JAN' are not supported in v0.1; "
                                "use numbers 1-12 (planned, see issue #3)")
     if spec.name == "day-of-week" and token.upper() in _DOW_NAMES:
         return _DOW_NAMES[token.upper()]
@@ -140,7 +139,8 @@ def _parse_field(text, spec, expr):
             raise _err(expr, spec, "empty list item")
         start, end, step = _parse_atom(token, spec, expr)
         if step > 1 and not spec.steps:
-            raise _err(expr, spec, f"step values in {spec.name} are not supported")
+            raise _err(expr, spec, f"step values in {spec.name} are not supported "
+                                   f"in v0.1 (planned, see issue #1)")
         found.update(range(start, end + 1, step))
     if spec.wrap:
         found = {v % 7 for v in found}
@@ -215,8 +215,8 @@ def describe(expr: str) -> str:
     Extra whitespace is fine and weekday names are case-insensitive.
     Returns a deterministic, human-readable description of when the job
     runs. Raises :class:`DescribeError` with a field-specific, actionable
-    message when the expression is malformed or uses syntax that is not
-    supported yet.
+    message when the expression is malformed or uses syntax that v0.1
+    does not support yet.
     """
     fields = expr.split()
     if any(field.startswith("@") for field in fields):
