@@ -6,6 +6,7 @@ import sys
 
 from cronlish import __version__
 from cronlish.describe import DescribeError, describe
+from cronlish.locale import terse
 
 
 def main(argv: "list[str] | None" = None) -> int:
@@ -25,9 +26,12 @@ def main(argv: "list[str] | None" = None) -> int:
     )
     parser.add_argument("--version", action="version",
                         version=f"cronlish {__version__}")
+    parser.add_argument("--locale-style", choices=("terse",),
+                        help="output style (omit for the standard description)")
     args = parser.parse_args(argv)
     try:
-        print(describe(" ".join(args.expression)))
+        formatter = terse if args.locale_style == "terse" else describe
+        print(formatter(" ".join(args.expression)))
     except DescribeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
