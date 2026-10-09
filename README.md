@@ -55,6 +55,23 @@ At 14:30 on day 1 of the month
 
 Exit codes: `0` success, `2` malformed expression (message on stderr). Quoting is optional — `cronlish */5 * * * *` works too.
 
+### Compact output (`--locale-style terse`)
+
+For logs, dashboards, and agent pipelines, pass `--locale-style terse` for a short deterministic form:
+
+```console
+$ cronlish --locale-style terse '*/5 * * * *'
+every 5 min
+$ cronlish --locale-style terse '0 9 * * MON-FRI'
+09:00 Mon-Fri
+$ cronlish --locale-style terse '30 14 1 * *'
+14:30 dom-1
+$ cronlish --locale-style terse '0 9 * * *'
+09:00 daily
+```
+
+Without the flag, output stays the full sentence (byte-identical to previous releases). Unknown style values are rejected by argparse (exit `2`).
+
 ## Supported syntax (v0.2)
 
 - Standard five fields: minute, hour, day-of-month, month, day-of-week.
