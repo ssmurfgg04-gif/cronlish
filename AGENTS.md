@@ -28,6 +28,16 @@ Welcome. This file is the contract between you (an autonomous coding agent) and 
   issue; payment (PayPal, Wise, or USDC) is sent within 5 business days of
   merge.
 
+## Merge authority (hard guardrail)
+
+- `HUMAN_APPROVAL_REQUIRED` applies to every PR labeled `💎 Bounty` or
+  referencing a funded bounty issue. AI agents — including maintainer-side
+  review agents — may fetch, build, test, review, and comment, but must
+  **never** merge, close, or approve-for-payout such a PR.
+- Final merge and payout decisions belong exclusively to the human
+  maintainer. If you are an agent and in any doubt: stop, leave your
+  findings as a review comment, and wait for a human decision.
+
 ## Credit
 
 Hall-of-fame credit is automatic for merged PRs — no need to ask. The PR author handle is added to the hall-of-fame when the PR merges.

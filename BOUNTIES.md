@@ -39,6 +39,13 @@ you're committed to contributing!
   bounty, and review comments are public. The maintainer selects the PR
   that best solves the problem, considering code quality, completeness,
   and contributor behavior. The maintainer's decision is final.
+- **Human merge authority.** Automated agents — including the maintainer's
+  own review agents — may fetch, build, test, and comment on bounty PRs,
+  but are **not** authorized to merge them. Every bounty PR requires final
+  approval from the **human maintainer** before merge (`HUMAN_APPROVAL_REQUIRED`),
+  and payout is authorized only by the human maintainer after merge.
+  A merge performed without that approval does not constitute bounty
+  acceptance and may be reverted.
 - One bounty claim per contributor at a time.
 - If your claim goes 14 days with no visible progress (no commits, no
   comments), the issue may be re-assigned to the next attempter.
@@ -83,7 +90,10 @@ financial details in public; an email or wallet address is enough.
 
 **Discretion.** Bounties are funded by the maintainer and awarded at the
 maintainer's sole discretion. Deadlines, amounts, and availability may
-change before a claim is accepted. The maintainer's decision on any bounty
-question — winners, splits, forfeits, refunds — is final.
+change before a claim is accepted. Only the human maintainer can accept a
+claim: AI maintainer agents are not authorized to merge bounty PRs or
+approve payouts, and a bot-performed merge is void for bounty purposes.
+The maintainer's decision on any bounty question — winners, splits,
+forfeits, refunds — is final.
 
 </details>
