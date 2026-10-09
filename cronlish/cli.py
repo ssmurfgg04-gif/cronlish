@@ -8,9 +8,9 @@ from cronlish import __version__
 from cronlish.describe import DescribeError, describe
 from cronlish.locale import terse
 
-#: Output styles selectable via ``--locale-style``. The default (flag absent)
-#: is the full-sentence style from :func:`cronlish.describe.describe`.
-LOCALE_STYLES = ("terse",)
+#: Output styles selectable via ``--locale-style``. ``plain`` is the default
+#: full-sentence style from :func:`cronlish.describe.describe`.
+LOCALE_STYLES = ("plain", "terse")
 
 
 def main(argv: "list[str] | None" = None) -> int:
@@ -31,15 +31,17 @@ def main(argv: "list[str] | None" = None) -> int:
     parser.add_argument(
         "--locale-style",
         choices=LOCALE_STYLES,
-        default=None,
-        help="compact output style ('terse'); default prints full sentences",
+        default="plain",
+        help="output style: 'plain' (default) full sentences, or 'terse' "
+             "compact one-liners for logs and agent pipelines",
     )
     parser.add_argument("--version", action="version",
                         version=f"cronlish {__version__}")
     args = parser.parse_args(argv)
     try:
         expr = " ".join(args.expression)
-        print(terse(expr) if args.locale_style == "terse" else describe(expr))
+        render = terse if args.locale_style == "terse" else describe
+        print(render(expr))
     except DescribeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

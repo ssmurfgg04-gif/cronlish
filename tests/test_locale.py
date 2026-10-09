@@ -55,12 +55,17 @@ def test_terse_dom_list():
 
 
 def test_terse_month_name():
-    assert terse("0 0 1 1 *") == "00:00 dom-1 in-jan"
+    assert terse("0 0 1 1 *") == "00:00 dom-1 in-Jan"
 
 
 def test_terse_month_range():
-    assert terse("0 0 * 1-3 *") == "00:00 in-jan-mar"
-    assert terse("0 0 1 1-3 *") == "00:00 dom-1 in-jan-mar"
+    assert terse("0 0 * 1-3 *") == "00:00 in-Jan-Mar"
+    assert terse("0 0 1 1-3 *") == "00:00 dom-1 in-Jan-Mar"
+
+
+def test_terse_dom_and_dow_or_semantics():
+    # Classic cron fires when EITHER restricted field matches; say so.
+    assert terse("0 9 1 * MON") == "09:00 (dom-1 or Mon)"
 
 
 # --- determinism --------------------------------------------------------------
@@ -74,6 +79,27 @@ def test_terse_deterministic():
 
 def test_terse_whitespace_insensitive():
     assert terse("  0 9 * * *  ") == terse("0 9 * * *")
+
+
+def test_terse_fuzz_deterministic():
+    """Random valid expressions must render byte-identically every time."""
+    import random
+    rng = random.Random(42)
+    fields = [
+        ["*", "*/5", "0", "30", "0,30", "10-20", "*/15", "5-55/10"],
+        ["*", "0", "9", "12", "*/2", "9-17", "0,12"],
+        ["*", "1", "15", "1,15", "*/2"],
+        ["*", "1", "6", "12", "1-3", "*/3"],
+        ["*", "MON", "MON-FRI", "1", "0", "SUN", "MON,WED,FRI", "*/2"],
+    ]
+    for _ in range(300):
+        expr = " ".join(rng.choice(f) for f in fields)
+        try:
+            first = terse(expr)
+        except DescribeError:
+            continue
+        assert terse(expr) == first
+        assert terse(expr) == terse(" ".join(expr.split()))
 
 
 # --- errors match describe() ---------------------------------------------------
