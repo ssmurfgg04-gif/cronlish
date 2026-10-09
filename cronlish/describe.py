@@ -5,7 +5,7 @@ month, day-of-week) into one stable English sentence; identical input always
 yields byte-identical output. Supported: values, ranges (a-b), lists
 (a,b,c) and steps (*/n, a-b/n) in every field; the cron macros
 @hourly, @daily/@midnight, @weekly, @monthly and @yearly/@annually;
-weekday names MON-SUN (0 and 7 are both Sunday). Anything
+month names JAN-DEC and weekday names MON-SUN (0 and 7 are both Sunday). Anything
 else raises :class:`DescribeError` saying what to do instead.
 
 >>> describe("*/5 * * * *")
@@ -35,6 +35,10 @@ _MONTHS = ("January", "February", "March", "April", "May", "June",
 _DAYS = ("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
          "Friday", "Saturday")
 _DOW_NAMES = {"SUN": 0, "MON": 1, "TUE": 2, "WED": 3, "THU": 4, "FRI": 5, "SAT": 6}
+_MONTH_NAMES = {
+    "JAN": 1, "FEB": 2, "MAR": 3, "APR": 4, "MAY": 5, "JUN": 6,
+    "JUL": 7, "AUG": 8, "SEP": 9, "OCT": 10, "NOV": 11, "DEC": 12,
+}
 
 # (name, smallest value, largest value, steps_ok, wraps_top_value)
 _FieldSpec = NamedTuple("_FieldSpec", [("name", str), ("lo", int), ("hi", int),
@@ -99,13 +103,14 @@ def _value_of(token, spec, expr):
             hint = " (0 and 7 are both Sunday)" if spec.wrap else ""
             raise _err(expr, spec, f"value {value} out of range {spec.lo}-{spec.hi}{hint}")
         return value
-    if spec.name == "month" and token.isalpha():
-        raise _err(expr, spec, "month names like 'JAN' are not supported yet; "
-                               "use numbers 1-12 (planned, see issue #3)")
+    if spec.name == "month" and token.upper() in _MONTH_NAMES:
+        return _MONTH_NAMES[token.upper()]
     if spec.name == "day-of-week" and token.upper() in _DOW_NAMES:
         return _DOW_NAMES[token.upper()]
     if spec.name == "day-of-week":
         expected = "*, a number 0-7, a name like MON-FRI, or a comma-separated list"
+    elif spec.name == "month":
+        expected = "*, a number 1-12, a name like JAN-DEC, or a comma-separated list"
     else:
         expected = (f"*, a number {spec.lo}-{spec.hi}, a range like a-b, "
                     "or a comma-separated list")
