@@ -25,9 +25,19 @@ def main(argv: "list[str] | None" = None) -> int:
     )
     parser.add_argument("--version", action="version",
                         version=f"cronlish {__version__}")
+    parser.add_argument(
+        "--locale-style",
+        choices=["terse"],
+        help="compact output style: 'terse' for minimal deterministic strings",
+    )
     args = parser.parse_args(argv)
     try:
-        print(describe(" ".join(args.expression)))
+        expr = " ".join(args.expression)
+        if args.locale_style == "terse":
+            from cronlish.locale import terse
+            print(terse(expr))
+        else:
+            print(describe(expr))
     except DescribeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
