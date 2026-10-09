@@ -53,6 +53,23 @@ $ cronlish '30 14 1 * *'
 At 14:30 on day 1 of the month
 ```
 
+### Terse output (logs and agents)
+
+For log pipelines and agent tooling where the full sentence is too bulky,
+`--locale-style terse` renders a compact, still-deterministic one-liner:
+
+```console
+$ cronlish --locale-style terse '*/5 * * * *'
+every 5 min
+$ cronlish --locale-style terse '0 9 * * MON-FRI'
+09:00 Mon-Fri
+$ cronlish --locale-style terse '30 14 1 * *'
+14:30 dom-1
+```
+
+Unknown style values are rejected by the parser with exit code `2`. Without
+the flag, output is byte-identical to previous versions.
+
 Exit codes: `0` success, `2` malformed expression (message on stderr). Quoting is optional — `cronlish */5 * * * *` works too.
 
 ## Supported syntax (v0.2)
