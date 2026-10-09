@@ -55,6 +55,29 @@ At 14:30 on day 1 of the month
 
 Exit codes: `0` success, `2` malformed expression (message on stderr). Quoting is optional — `cronlish */5 * * * *` works too.
 
+### Compact output
+
+Use `--locale-style terse` for deterministic output in logs and dashboards:
+
+```console
+$ cronlish --locale-style terse '*/5 * * * *'
+every 5 min
+$ cronlish --locale-style terse '0 9 * * MON-FRI'
+09:00 Mon-Fri
+$ cronlish --locale-style terse '30 14 1 * *'
+14:30 dom-1
+$ cronlish --locale-style terse '0 9 * * *'
+09:00 daily
+```
+
+All supported cron syntax and macros work in this style. Other schedules use
+`min-`, `hour-`, `dom-` and `month-` labels with sorted values or ranges;
+weekdays and months use fixed English abbreviations. Restricted day-of-month
+and day-of-week fields are joined with `or` (parenthesized when a month also
+restricts the schedule). Python callers can use `from cronlish.locale import terse`.
+Omitting the flag preserves the original English output; an unknown
+style exits `2` with an argparse error.
+
 ## Supported syntax (v0.2)
 
 - Standard five fields: minute, hour, day-of-month, month, day-of-week.
@@ -65,7 +88,7 @@ Exit codes: `0` success, `2` malformed expression (message on stderr). Quoting i
 
 Known quirks, described honestly: when both day-of-month and day-of-week are restricted, classic cron fires when *either* matches (OR) — cronlish says so ("... on day 1 of the month or on Monday").
 
-Not yet supported (each is an open, agent-friendly issue): month names like `JAN` (#3), the `--locale-style` CLI flag (#4).
+Not yet supported: month names like `JAN` (#3, an open, agent-friendly issue).
 
 ## 💰 Bounties
 

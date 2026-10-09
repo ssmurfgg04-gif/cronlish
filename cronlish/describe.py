@@ -220,15 +220,8 @@ def _date_suffix(dom, month, dow, clock):
         suffix = " every day"
     return suffix
 
-def describe(expr: str) -> str:
-    """Translate a five-field cron expression into one English sentence.
-
-    Extra whitespace is fine; weekday names and @macros are case-insensitive.
-    Returns a deterministic, human-readable description of when the job
-    runs. Raises :class:`DescribeError` with a field-specific, actionable
-    message when the expression is malformed or uses syntax that is not
-    supported yet.
-    """
+def _parse_expression(expr: str) -> Tuple[_Field, ...]:
+    """Validate and expand an expression for all output styles."""
     raw = expr.strip()
     # Macros are case-insensitive single tokens; expand before five-field parsing.
     key = raw.lower()
@@ -243,7 +236,19 @@ def describe(expr: str) -> str:
         raise DescribeError(f"invalid cron expression {expr!r}: expected 5 space-"
                             "separated fields (minute hour day-of-month month "
                             f"day-of-week), got {len(fields)}")
-    parsed = [_parse_field(token, spec, expr) for token, spec in zip(fields, _SPECS)]
-    minute, hour, dom, month, dow = parsed
+    return tuple(_parse_field(token, spec, expr)
+                 for token, spec in zip(fields, _SPECS))
+
+
+def describe(expr: str) -> str:
+    """Translate a five-field cron expression into one English sentence.
+
+    Extra whitespace is fine; weekday names and @macros are case-insensitive.
+    Returns a deterministic, human-readable description of when the job
+    runs. Raises :class:`DescribeError` with a field-specific, actionable
+    message when the expression is malformed or uses syntax that is not
+    supported yet.
+    """
+    minute, hour, dom, month, dow = _parse_expression(expr)
     return _time_sentence(minute, hour) + _date_suffix(
         dom, month, dow, clock=len(minute.values) == 1 and len(hour.values) == 1)
