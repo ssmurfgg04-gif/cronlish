@@ -19,17 +19,6 @@ from typing import Callable, List, NamedTuple, Optional, Sequence, Tuple
 
 __all__ = ["DescribeError", "describe"]
 
-_MACROS = {
-    "@hourly": "0 * * * *",
-    "@daily": "0 0 * * *",
-    "@midnight": "0 0 * * *",
-    "@weekly": "0 0 * * 0",
-    "@monthly": "0 0 1 * *",
-    "@yearly": "0 0 1 1 *",
-    "@annually": "0 0 1 1 *",
-}
-
-
 _MONTHS = ("January", "February", "March", "April", "May", "June",
            "July", "August", "September", "October", "November", "December")
 _DAYS = ("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
@@ -223,22 +212,17 @@ def _date_suffix(dom, month, dow, clock):
 def describe(expr: str) -> str:
     """Translate a five-field cron expression into one English sentence.
 
-    Extra whitespace is fine; weekday names and @macros are case-insensitive.
+    Extra whitespace is fine and weekday names are case-insensitive.
     Returns a deterministic, human-readable description of when the job
     runs. Raises :class:`DescribeError` with a field-specific, actionable
     message when the expression is malformed or uses syntax that is not
     supported yet.
     """
-    raw = expr.strip()
-    # Macros are case-insensitive single tokens; expand before five-field parsing.
-    key = raw.lower()
-    if key in _MACROS:
-        expr = _MACROS[key]
     fields = expr.split()
     if any(field.startswith("@") for field in fields):
-        raise DescribeError(f"invalid cron expression {raw!r}: unknown macro; "
-                            "supported macros are "
-                            + ", ".join(sorted(_MACROS)))
+        raise DescribeError(f"invalid cron expression {expr!r}: macros like '@daily' "
+                            "are not supported in v0.1; expand them manually, e.g. "
+                            "@daily is '0 0 * * *' (planned, see issue #2)")
     if len(fields) != 5:
         raise DescribeError(f"invalid cron expression {expr!r}: expected 5 space-"
                             "separated fields (minute hour day-of-month month "

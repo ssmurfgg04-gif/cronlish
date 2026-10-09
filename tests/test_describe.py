@@ -229,41 +229,9 @@ def test_error_month_names_not_supported_yet():
         describe("0 0 1 JAN *")
 
 
-def test_macro_hourly():
-    assert describe("@hourly") == "At minute 0 past every hour"
-
-
-def test_macro_daily():
-    assert describe("@daily") == "At 00:00 every day"
-
-
-def test_macro_midnight():
-    assert describe("@midnight") == "At 00:00 every day"
-
-
-def test_macro_weekly():
-    assert describe("@weekly") == "At 00:00, Sunday"
-
-
-def test_macro_monthly():
-    assert describe("@monthly") == "At 00:00 on day 1 of the month"
-
-
-def test_macro_yearly():
-    assert describe("@yearly") == "At 00:00 on day 1 of the month in January"
-
-
-def test_macro_annually():
-    assert describe("@annually") == "At 00:00 on day 1 of the month in January"
-
-
-def test_macro_case_insensitive():
-    assert describe("@Daily") == describe("@daily")
-
-
-def test_error_unknown_macro():
-    with pytest.raises(DescribeError, match="unknown macro"):
-        describe("@sometimes")
+def test_error_macros_not_supported_yet():
+    with pytest.raises(DescribeError, match="issue #2"):
+        describe("@daily")
 
 
 def test_dom_step_every_other_day():
