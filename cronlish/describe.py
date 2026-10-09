@@ -229,6 +229,14 @@ def describe(expr: str) -> str:
     message when the expression is malformed or uses syntax that is not
     supported yet.
     """
+    parsed = _parse_expression(expr)
+    minute, hour, dom, month, dow = parsed
+    return _time_sentence(minute, hour) + _date_suffix(
+        dom, month, dow, clock=len(minute.values) == 1 and len(hour.values) == 1)
+
+
+def _parse_expression(expr: str) -> Tuple[_Field, ...]:
+    """Validate and expand an expression for either output style."""
     raw = expr.strip()
     # Macros are case-insensitive single tokens; expand before five-field parsing.
     key = raw.lower()
@@ -243,7 +251,4 @@ def describe(expr: str) -> str:
         raise DescribeError(f"invalid cron expression {expr!r}: expected 5 space-"
                             "separated fields (minute hour day-of-month month "
                             f"day-of-week), got {len(fields)}")
-    parsed = [_parse_field(token, spec, expr) for token, spec in zip(fields, _SPECS)]
-    minute, hour, dom, month, dow = parsed
-    return _time_sentence(minute, hour) + _date_suffix(
-        dom, month, dow, clock=len(minute.values) == 1 and len(hour.values) == 1)
+    return tuple(_parse_field(token, spec, expr) for token, spec in zip(fields, _SPECS))
