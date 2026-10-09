@@ -6,6 +6,11 @@ import sys
 
 from cronlish import __version__
 from cronlish.describe import DescribeError, describe
+from cronlish.locale import terse
+
+#: Output styles selectable via ``--locale-style``. The default (flag absent)
+#: is the full-sentence style from :func:`cronlish.describe.describe`.
+LOCALE_STYLES = ("terse",)
 
 
 def main(argv: "list[str] | None" = None) -> int:
@@ -23,11 +28,18 @@ def main(argv: "list[str] | None" = None) -> int:
         nargs="+",
         help="five-field cron expression, quoted or not, e.g. '*/5 * * * *'",
     )
+    parser.add_argument(
+        "--locale-style",
+        choices=LOCALE_STYLES,
+        default=None,
+        help="compact output style ('terse'); default prints full sentences",
+    )
     parser.add_argument("--version", action="version",
                         version=f"cronlish {__version__}")
     args = parser.parse_args(argv)
     try:
-        print(describe(" ".join(args.expression)))
+        expr = " ".join(args.expression)
+        print(terse(expr) if args.locale_style == "terse" else describe(expr))
     except DescribeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

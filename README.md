@@ -55,6 +55,19 @@ At 14:30 on day 1 of the month
 
 Exit codes: `0` success, `2` malformed expression (message on stderr). Quoting is optional — `cronlish */5 * * * *` works too.
 
+### Terse output (`--locale-style terse`)
+
+For logs, dashboards, and agent pipelines where every byte counts:
+
+```console
+$ cronlish --locale-style terse '*/5 * * * *'
+every 5 min
+$ cronlish --locale-style terse '0 9 * * MON-FRI'
+09:00 Mon-Fri
+```
+
+Terse output is deterministic (same input → byte-identical output). An unknown style exits `2` with an argparse error.
+
 ## Supported syntax (v0.2)
 
 - Standard five fields: minute, hour, day-of-month, month, day-of-week.
@@ -65,7 +78,7 @@ Exit codes: `0` success, `2` malformed expression (message on stderr). Quoting i
 
 Known quirks, described honestly: when both day-of-month and day-of-week are restricted, classic cron fires when *either* matches (OR) — cronlish says so ("... on day 1 of the month or on Monday").
 
-Not yet supported (each is an open, agent-friendly issue): month names like `JAN` (#3), the `--locale-style` CLI flag (#4).
+Not yet supported (each is an open, agent-friendly issue): month names like `JAN` (#3).
 
 ## 💰 Bounties
 
