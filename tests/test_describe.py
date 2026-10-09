@@ -224,9 +224,26 @@ def test_error_reversed_range():
         describe("50-10 * * * *")
 
 
-def test_error_month_names_not_supported_yet():
-    with pytest.raises(DescribeError, match="issue #3"):
-        describe("0 0 1 JAN *")
+def test_month_name_single():
+    assert describe("0 0 1 JAN *") == "At 00:00 on day 1 of the month in January"
+
+
+def test_month_name_range():
+    assert describe("0 12 * JUL-AUG *") == "At 12:00 in July through August"
+
+
+def test_month_name_list():
+    assert describe("0 0 1 JAN,MAR *") == "At 00:00 on day 1 of the month in January and March"
+
+
+def test_month_name_case_insensitive():
+    assert describe("0 0 1 jan *") == "At 00:00 on day 1 of the month in January"
+    assert describe("0 12 * jul-aug *") == "At 12:00 in July through August"
+
+
+def test_error_month_full_name():
+    with pytest.raises(DescribeError, match="invalid token 'JANUARY'"):
+        describe("0 0 1 JANUARY *")
 
 
 def test_macro_hourly():
